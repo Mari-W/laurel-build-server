@@ -1,0 +1,73 @@
+{% with name="Builds" %}
+    {% include "header.html" %}
+{% endwith %}
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            {% if admin and (course != None or student != None) %}
+                <a href="/builds">Builds</a>
+            {% else %}
+                Builds
+            {% endif %}
+        </li>
+        {% if course != None %}
+            <li class="breadcrumb-item">
+                {% if admin or tutor %}
+                    <a href="/builds/{{ course }}">{{ course }}</a>
+                {% else %}
+                    {{ course }}
+                {% endif %}
+            </li>
+        {% endif %}
+        {% if student != None %}
+            <li class="breadcrumb-item active" aria-current="page">{{ student }}</li>
+        {% endif %}
+    </ol>
+</nav>
+<table class="table table-borderless mt-3 ms-2">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        {% if course == None %}
+            <th scope="col">Course</th>
+        {% endif %}
+        {% if student == None %}
+            <th scope="col">Student</th>
+        {% endif %}
+        <th scope="col">Triggered At</th>
+        <th scope="col">Duration</th>
+        <th scope="col">Exercise</th>
+        <th scope="col">Status</th>
+        <th scope="col">Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for build in builds | reverse %}
+        <tr>
+            <th scope="row">{{ build.id }}</th>
+            {% if course == None %}
+                <td><a href="/builds/{{ build.course }}">{{ build.course }}</a></td>
+            {% endif %}
+            {% if student == None %}
+                <td><a href="/builds/{{ build.course }}/{{ build.student }}">{{ build.student }}</a></td>
+            {% endif %}
+            <td>{{ build.start }}</td>
+            <td>{{ build.duration }}</td>
+            <td>{{ build.exercise }}</td>
+            <td>{{ 'failure' if build.failure else 'success' }}</td>
+            <td><a class="btn btn-sm badge btn-{{ 'danger' if build.failure else 'success' }}"
+                   href="/builds/{{ build.course }}/{{ build.student }}/{{ build.id }}">LOGS</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+<style>
+    body {
+        overflow-x: hidden;
+    }
+
+    a {
+        text-decoration: none;
+    }
+</style>
+{% include "footer.html" %}

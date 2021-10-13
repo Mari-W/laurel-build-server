@@ -1,0 +1,65 @@
+{% with name="Build" %}
+    {% include "header.html" %}
+{% endwith %}
+<nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mt-3 ms-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item" aria-current="page">
+            {% if admin  and (course != None or student != None) %}
+                <a href="/builds">Builds</a>
+            {% else %}
+                Builds
+            {% endif %}
+        </li>
+        <li class="breadcrumb-item">
+            {% if admin or tutor %}
+                <a href="/builds/{{ course }}">{{ course }}</a>
+            {% else %}
+                {{ course }}
+            {% endif %}
+        </li>
+        <li class="breadcrumb-item" aria-current="page"><a href="/builds/{{ course }}/{{ student }}">{{ student }}</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">{{ build.id }}</li>
+    </ol>
+</nav>
+<div class="position-absolute top-50 start-50 translate-middle">
+    <div class="card rounded-3">
+        <h3 class="card-header">
+            Build #{{ build.id }} ({{ build.exercise }})
+            {% if build.failure %}
+                <span class="badge bg-danger ms-2">FAILURE</span>
+            {% else %}
+                <span class="badge bg-success ms-2">SUCCESS</span>
+            {% endif %}
+        </h3>
+
+        {% for log in build.logs_as_list %}
+            <div class="card-body mt-2 mb-2">
+                <h5 class="card-subtitle">{{ log["name"] }}
+                    {% if log["failure"] %}
+                        <span class="badge bg-danger ms-2">FAILURE</span>
+                    {% else %}
+                        <span class="badge bg-success ms-2">SUCCESS</span>
+                    {% endif %}
+                </h5>
+                <hr/>
+                {% for line in log["logs"] %}
+                    <pre class="card-text">{{ line }}</pre>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="card-footer">build took {{ build.duration }}</div>
+    </div>
+</div>
+<style>
+    a {
+        text-decoration: none;
+    }
+
+    pre {
+        margin: 0;
+        padding: 0;
+        line-height: normal;
+    }
+</style>
+{% include "footer.html" %}
