@@ -118,6 +118,12 @@ def _build(sha: str, course: str, student: str, exercise: str = None):
 
 
 def build(course: str, student: str, exercise: str):
+    docker_client = docker.DockerClient(base_url='unix://var/run/docker.sock')
+    try:
+        docker_client.images.get(course)
+    except ImageNotFound:
+        return
+
     api = _repo_api()
     sha = api.repo_get_all_commits(owner=course, repo=student, limit=1)[0].sha
     api.repo_create_status(owner=course, repo=student, sha=sha, body=CreateStatusOption(
@@ -125,4 +131,5 @@ def build(course: str, student: str, exercise: str):
         description=f"build queued",
         state="pending",
     ))
+
     pool.submit(_build, sha, course, student, exercise)
