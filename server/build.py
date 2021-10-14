@@ -64,6 +64,11 @@ def _build(sha: str, course: str, student: str, exercise: str = None):
                 }
             )
         except ImageNotFound:
+            api.repo_create_status(owner=course, repo=student, sha=sha, body=CreateStatusOption(
+                context=f"laurel/{exercise}",
+                description=f"image not found",
+                state="failure",
+            ))
             # if image is not found just dont build, as simple as that
             return
 
