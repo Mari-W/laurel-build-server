@@ -120,7 +120,7 @@ def _build(sha: str, course: str, student: str, exercise: str = None):
 def build(course: str, student: str, exercise: str):
     docker_client = docker.DockerClient(base_url='unix://var/run/docker.sock')
     try:
-        docker_client.images.get(course)
+        docker_client.images.get(course.lower())
     except ImageNotFound:
         return
 
