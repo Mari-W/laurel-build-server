@@ -3,6 +3,7 @@ import traceback
 from authlib.integrations.base_client import MismatchingStateError, OAuthError
 from flask import session
 from telegram import Bot
+from werkzeug.exceptions import NotFound
 from werkzeug.utils import redirect
 
 from server.env import Env
@@ -15,6 +16,10 @@ def error_handling(app):
     @app.errorhandler(MismatchingStateError)
     def state_error(_):
         return redirect("/auth/logout")
+
+    @app.errorhandler(NotFound)
+    def all_exception_handler(_):
+        return "this route does not exist", 404
 
     @app.errorhandler(OAuthError)
     def oauth_error(_):
