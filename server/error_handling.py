@@ -18,8 +18,8 @@ def error_handling(app):
         return redirect("/auth/logout")
 
     @app.errorhandler(NotFound)
-    def all_exception_handler(_):
-        return "this route does not exist", 404
+    def not_found(_):
+        return "route does not exist", 404
 
     @app.errorhandler(OAuthError)
     def oauth_error(_):
